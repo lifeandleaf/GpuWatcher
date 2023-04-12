@@ -6,3 +6,6 @@ A gpu watcher made of python.
 pip install -r requirements.txt
 python gpuWatcher.py
 ```
+
+# Show
+![](show.png)
