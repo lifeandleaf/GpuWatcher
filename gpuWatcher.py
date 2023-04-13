@@ -83,7 +83,7 @@ def getDeviceMemOccupy():
     memOccupyFloat = []
     for i in range(deviceCount):
         handle = nvmlDeviceGetHandleByIndex(i)
-        used = int(nvmlDeviceGetMemoryInfo(handle).used / nvmlDeviceGetMemoryInfo(handle).total)
+        used = int(nvmlDeviceGetMemoryInfo(handle).used / nvmlDeviceGetMemoryInfo(handle).total * 10)
         used_F = float(nvmlDeviceGetMemoryInfo(handle).used / nvmlDeviceGetMemoryInfo(handle).total)
         memOccupyInt.append(used)
         memOccupyFloat.append(used_F)
@@ -97,8 +97,8 @@ def getRandom():
     ans = []
     ans_f = []
     for i in range(4):
-        p = random.uniform(0, 10.0)
-        ans.append(int(p))
+        p = random.uniform(0, 1.0)
+        ans.append(int(p * 10))
         ans_f.append(p)
     return ans, ans_f
 
@@ -112,7 +112,8 @@ def main(stdscr):
         # set color
         stdscr.attron(curses.color_pair(6))
         curses.curs_set(False)
-        stdscr.nodelay(True)
+        # stdscr.nodelay(True)
+        curses.halfdelay(10)
         mStr = ""
         for i in range(97):
             mStr += "—"
@@ -138,7 +139,7 @@ def main(stdscr):
         memOccupy, perc = getRandom()
         for i in range(4):
             stdscr.attron(curses.color_pair(i + 1))
-            stdscr.addstr(12, i * 21 + 14, tempInfo[i] + "({:.2f}%)".format(perc[i] * 10))
+            stdscr.addstr(12, i * 21 + 14, tempInfo[i] + "({:.2f}%)".format(perc[i] * 100))
             for j in range(19):
                 for h in range(occupy[i][j + 1]):
                     stdscr.addch(10 - h, i * 21 + 12 + j + 1, '█')
@@ -148,10 +149,13 @@ def main(stdscr):
             occupy[i][19] = memOccupy[i]
             stdscr.attroff(curses.color_pair(i + 1))
         stdscr.refresh()
-        time.sleep(1)
-        c = stdscr.getch()
-        if c == ord('q'):
-            break    
+        # time.sleep(1)
+        try:
+            c = stdscr.getch()
+            if c == ord('q'):
+                break
+        except:
+            continue   
 
 if __name__ == '__main__':
     stdscr = initCurses(13, 98)
