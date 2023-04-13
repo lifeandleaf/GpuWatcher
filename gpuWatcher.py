@@ -108,47 +108,49 @@ def main(stdscr):
                 [1, 2, 3, 4, 2, 5, 7, 8, 10, 7, 6, 4, 2, 6, 5, 4, 3, 3, 5, 6],
                 [1, 2, 3, 4, 2, 5, 7, 8, 10, 7, 6, 4, 2, 6, 5, 4, 3, 3, 5, 6]]
     while True:
-        stdscr.erase()
-        # set color
-        stdscr.attron(curses.color_pair(6))
-        curses.curs_set(False)
-        # stdscr.nodelay(True)
-        curses.halfdelay(10)
-        mStr = ""
-        for i in range(97):
-            mStr += "—"
-        # bottom line
-        stdscr.addstr(0, 0, mStr)
-        # top line  
-        stdscr.addstr(11, 0, mStr)
-        # split line
-        for i in range(5):
-            for j in range(10):
-                y = j + 1
-                x = 21 * i + 12
-                ch = '|'
-                stdscr.addch(y, x, ch)
-        info = getDeviceInfo()
-        # print devices info
-        for i in range(4):
-            stdscr.addstr(i * 2 + 2, 0, info[i][0])
-            stdscr.addstr(i * 2 + 3, 0, info[i][1])
-        stdscr.attroff(curses.color_pair(6))
-        # list info
-        tempInfo = getDeviceTemp()
-        memOccupy, perc = getRandom()
-        for i in range(4):
-            stdscr.attron(curses.color_pair(i + 1))
-            stdscr.addstr(12, i * 21 + 14, tempInfo[i] + "({:.2f}%)".format(perc[i] * 100))
-            for j in range(19):
-                for h in range(occupy[i][j + 1]):
-                    stdscr.addch(10 - h, i * 21 + 12 + j + 1, '█')
-                occupy[i][j] = occupy[i][j + 1]
-            for h in range(memOccupy[i]):
-                stdscr.addch(10 - h, i * 21 + 13 + 19, '█')
-            occupy[i][19] = memOccupy[i]
-            stdscr.attroff(curses.color_pair(i + 1))
-        stdscr.refresh()
+        h, w = stdscr.getmaxyx()
+        if h >= 13 and w >= 98:
+            stdscr.erase()
+            # set color
+            stdscr.attron(curses.color_pair(6))
+            curses.curs_set(False)
+            # stdscr.nodelay(True)
+            curses.halfdelay(10)
+            mStr = ""
+            for i in range(97):
+                mStr += "—"
+            # bottom line
+            stdscr.addstr(0, 0, mStr)
+            # top line  
+            stdscr.addstr(11, 0, mStr)
+            # split line
+            for i in range(5):
+                for j in range(10):
+                    y = j + 1
+                    x = 21 * i + 12
+                    ch = '|'
+                    stdscr.addch(y, x, ch)
+            info = getDeviceInfo()
+            # print devices info
+            for i in range(4):
+                stdscr.addstr(i * 2 + 2, 0, info[i][0])
+                stdscr.addstr(i * 2 + 3, 0, info[i][1])
+            stdscr.attroff(curses.color_pair(6))
+            # list info
+            tempInfo = getDeviceTemp()
+            memOccupy, perc = getDeviceMemOccupy()
+            for i in range(4):
+                stdscr.attron(curses.color_pair(i + 1))
+                stdscr.addstr(12, i * 21 + 14, tempInfo[i] + "({:.2f}%)".format(perc[i] * 100))
+                for j in range(19):
+                    for h in range(occupy[i][j + 1]):
+                        stdscr.addch(10 - h, i * 21 + 12 + j + 1, '█')
+                    occupy[i][j] = occupy[i][j + 1]
+                for h in range(memOccupy[i]):
+                    stdscr.addch(10 - h, i * 21 + 13 + 19, '█')
+                occupy[i][19] = memOccupy[i]
+                stdscr.attroff(curses.color_pair(i + 1))
+            stdscr.refresh()
         # time.sleep(1)
         try:
             c = stdscr.getch()
